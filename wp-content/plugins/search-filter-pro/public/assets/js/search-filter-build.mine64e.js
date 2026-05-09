@@ -1823,19 +1823,26 @@
                                 //     r = e.getUrlParams(!0, "");
                                 // a = e.addUrlParam(a, r), window.location.href = a
                                 var a = i.getResultsUrl(e, e.results_url);
-                                var r = e.getUrlParams(!0, "");
-                                var paths = [];
-                                if (typeof r === 'object' && r !== null) {
-                                    Object.keys(r).forEach(function(key) {
-                                        if (r[key] && r[key] !== "" && key.indexOf('_sf_') === -1) {
-                                            paths.push(key + "/" + r[key]);
-                                            delete r[key]; 
-                                        }
+                                var rawParams = e.getUrlParams(!0, "");
+                                var r = {};
+                                if (typeof rawParams === "string") {
+                                    rawParams.split('&').forEach(function(part) {
+                                        var item = part.split('=');
+                                        if(item[0]) r[decodeURIComponent(item[0])] = decodeURIComponent(item[1] || "");
                                     });
+                                } else {
+                                    r = rawParams;
                                 }
+                                var paths = [];
+                                var cleanKeys = ["khu-vuc", "nganh-nghe"];
+                                cleanKeys.forEach(function(key) {
+                                    if (r[key] && r[key] !== "") {
+                                        paths.push(key + "/" + r[key]);
+                                        delete r[key]; 
+                                    }
+                                });
                                 if (paths.length > 0) {
-                                    if (a.substr(-1) !== '/') a += '/';
-                                    a = a + paths.join("/") + "/";
+                                    a = a.replace(/\/$/, "") + "/" + paths.join("/") + "/";
                                 }
                                 a = e.addUrlParam(a, r);
                                 window.location.href = a;
