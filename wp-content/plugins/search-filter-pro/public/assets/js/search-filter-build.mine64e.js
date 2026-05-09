@@ -1825,16 +1825,16 @@
                                 var a = i.getResultsUrl(e, e.results_url);
                                 var rawParams = e.getUrlParams(!0, "");
                                 var r = {};
-                                if (typeof rawParams === "string") {
+                                if (typeof rawParams === "string" && rawParams !== "") {
                                     rawParams.split('&').forEach(function(part) {
                                         var item = part.split('=');
                                         if(item[0]) r[decodeURIComponent(item[0])] = decodeURIComponent(item[1] || "");
                                     });
-                                } else {
+                                } else if (typeof rawParams === "object") {
                                     r = rawParams;
                                 }
                                 var paths = [];
-                                var cleanKeys = ["khu-vuc", "nganh-nghe"];
+                                var cleanKeys = ["khu-vuc", "nganh-nghe"]; 
                                 cleanKeys.forEach(function(key) {
                                     if (r[key] && r[key] !== "") {
                                         paths.push(key + "/" + r[key]);
@@ -1844,7 +1844,9 @@
                                 if (paths.length > 0) {
                                     a = a.replace(/\/$/, "") + "/" + paths.join("/") + "/";
                                 }
-                                a = e.addUrlParam(a, r);
+                                if (Object.keys(r).length > 0) {
+                                    a = e.addUrlParam(a, r);
+                                }
                                 window.location.href = a;
                             }
                             return !1
